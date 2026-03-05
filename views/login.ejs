@@ -3,173 +3,58 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Access Required</title>
+  <title>DMT Analytics — Sign In</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg: #080b0f;
-      --surface: #0d1117;
-      --border: #1e2d3d;
-      --accent: #00ff88;
-      --accent-dim: rgba(0, 255, 136, 0.12);
-      --text: #c9d1d9;
-      --muted: #484f58;
-      --danger: #ff4757;
+      --bg: #f5f6fa; --white: #ffffff; --border: #e2e5ed;
+      --text: #1a1d23; --muted: #8a90a0; --accent: #4361ee;
+      --accent-light: rgba(67,97,238,0.08); --danger: #e63946;
+      --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.06);
     }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Share Tech Mono', monospace;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-
-    /* Animated grid background */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(0, 255, 136, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 255, 136, 0.03) 1px, transparent 1px);
-      background-size: 40px 40px;
-      animation: gridScroll 20s linear infinite;
-      pointer-events: none;
-    }
-
-    @keyframes gridScroll {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(40px); }
-    }
-
-    .login-wrap {
-      position: relative;
-      width: 100%;
-      max-width: 420px;
-      padding: 20px;
-    }
-
-    .login-box {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 48px 40px;
-      position: relative;
-    }
-
-    .login-box::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--accent), transparent);
-    }
-
-    .logo {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 13px;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 8px;
-    }
-
-    .subtitle {
-      color: var(--muted);
-      font-size: 12px;
-      margin-bottom: 40px;
-    }
-
-    .prompt {
-      color: var(--accent);
-      font-size: 12px;
-      margin-bottom: 8px;
-    }
-
-    .prompt::before { content: '> '; }
-
-    input[type="password"] {
-      width: 100%;
-      background: rgba(0,255,136,0.04);
-      border: 1px solid var(--border);
-      color: var(--accent);
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 15px;
-      padding: 14px 16px;
-      outline: none;
-      transition: border-color 0.2s;
-      caret-color: var(--accent);
-    }
-
-    input[type="password"]:focus {
-      border-color: var(--accent);
-      background: rgba(0,255,136,0.07);
-    }
-
-    input[type="password"]::placeholder {
-      color: var(--muted);
-    }
-
-    .btn {
-      width: 100%;
-      margin-top: 16px;
-      background: var(--accent);
-      color: #000;
-      border: none;
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 13px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      padding: 14px;
-      cursor: pointer;
-      transition: opacity 0.15s, transform 0.1s;
-    }
-
-    .btn:hover { opacity: 0.85; }
+    body { background: var(--bg); font-family: 'Inter', sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text); }
+    body::before { content: ''; position: fixed; inset: 0; background-image: radial-gradient(circle, #c8ccd6 1px, transparent 1px); background-size: 28px 28px; opacity: 0.5; pointer-events: none; }
+    .card { position: relative; background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 40px 44px; width: 100%; max-width: 400px; box-shadow: var(--shadow); }
+    .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+    .brand-icon { width: 32px; height: 32px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .brand-icon svg { width: 18px; height: 18px; fill: white; }
+    .brand-name { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 16px; color: var(--text); letter-spacing: -0.3px; }
+    .brand-name span { color: var(--accent); }
+    h1 { font-family: 'DM Sans', sans-serif; font-size: 22px; font-weight: 600; color: var(--text); margin-bottom: 6px; letter-spacing: -0.4px; }
+    .subtitle { font-size: 13px; color: var(--muted); margin-bottom: 28px; }
+    label { display: block; font-size: 12px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+    input[type="password"] { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 14px; color: var(--text); background: var(--white); outline: none; transition: border-color 0.15s, box-shadow 0.15s; }
+    input[type="password"]:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+    .btn { width: 100%; margin-top: 16px; padding: 11px; background: var(--accent); color: white; border: none; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 14px; cursor: pointer; transition: opacity 0.15s, transform 0.1s; }
+    .btn:hover { opacity: 0.9; }
     .btn:active { transform: scale(0.99); }
-
-    .error {
-      margin-top: 16px;
-      padding: 10px 14px;
-      background: rgba(255, 71, 87, 0.1);
-      border-left: 3px solid var(--danger);
-      color: var(--danger);
-      font-size: 12px;
-    }
-
-    .error::before { content: '✗ '; }
+    .error { margin-top: 14px; padding: 10px 12px; background: rgba(230,57,70,0.07); border: 1px solid rgba(230,57,70,0.2); border-radius: 6px; color: var(--danger); font-size: 12px; }
+    .footer { margin-top: 20px; font-size: 11px; color: var(--muted); text-align: center; }
   </style>
 </head>
 <body>
-  <div class="login-wrap">
-    <div class="login-box">
-      <div class="logo">BXSS Server</div>
-      <div class="subtitle">authentication required</div>
-
-      <div class="prompt">enter passphrase</div>
-      <form method="POST" action="/login">
-        <input
-          type="password"
-          name="password"
-          placeholder="••••••••••••"
-          autofocus
-          autocomplete="current-password"
-        />
-        <button type="submit" class="btn">Authenticate</button>
-      </form>
-
-      <% if (error) { %>
-        <div class="error"><%= error %></div>
-      <% } %>
+  <div class="card">
+    <div class="brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/>
+        </svg>
+      </div>
+      <div class="brand-name">DMT <span>Analytics</span></div>
     </div>
+    <h1>Welcome back</h1>
+    <p class="subtitle">Sign in to your analytics dashboard</p>
+    <form method="POST" action="/login">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="Enter your password" autofocus autocomplete="current-password"/>
+      <button type="submit" class="btn">Sign in</button>
+    </form>
+    <% if (error) { %>
+      <div class="error">⚠ <%= error %></div>
+    <% } %>
   </div>
+  <div class="footer">© 2026 DMT Analytics. All rights reserved.</div>
 </body>
 </html>
