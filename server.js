@@ -110,7 +110,7 @@ app.get(['/t', '/x', '/c', '/payload.js'], (req, res) => {
 
 // ─── Routes ──────────────────────────────────────────────────────────────────
 app.use('/callback', callbackLimiter, require('./routes/callback'));
-app.use('/', loginLimiter, require('./routes/auth'));
+app.use('/', require('./routes/auth'));
 app.use('/dashboard',                 require('./routes/dashboard'));
 
 // Root redirect

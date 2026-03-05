@@ -2,6 +2,14 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 
+
+const rateLimit = require('express-rate-limit');
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 50,
+  message: 'Too many login attempts'
+});
+
 // GET /login
 router.get('/login', (req, res) => {
   if (req.session?.authenticated) return res.redirect('/dashboard');
@@ -9,7 +17,7 @@ router.get('/login', (req, res) => {
 });
 
 // POST /login
-router.post('/login', async (req, res) => {
+router.post('/login', loginLimiter, (req, res) => {
   const { password } = req.body;
 
   if (!password) {
