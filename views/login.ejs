@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DMT Analytics — Sign In</title>
+  <title>Data &amp; Metrics Telemetry Analytics — Sign In</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
@@ -16,22 +16,58 @@
     }
     body { background: var(--bg); font-family: 'Inter', sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text); }
     body::before { content: ''; position: fixed; inset: 0; background-image: radial-gradient(circle, #c8ccd6 1px, transparent 1px); background-size: 28px 28px; opacity: 0.5; pointer-events: none; }
-    .card { position: relative; background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 40px 44px; width: 100%; max-width: 400px; box-shadow: var(--shadow); }
+
+    .topnav { position: fixed; top: 0; left: 0; right: 0; height: 48px; background: white; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; z-index: 10; }
+    .topnav-brand { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 14px; color: var(--text); display: flex; align-items: center; gap: 8px; }
+    .topnav-brand svg { width: 16px; height: 16px; fill: var(--accent); }
+    .topnav-links { display: flex; gap: 24px; font-size: 12px; color: var(--muted); }
+    .topnav-links a { color: var(--muted); text-decoration: none; }
+    .topnav-links a:hover { color: var(--accent); }
+
+    .card { position: relative; background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 40px 44px; width: 100%; max-width: 420px; box-shadow: var(--shadow); }
+
     .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
     .brand-icon { width: 32px; height: 32px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
     .brand-icon svg { width: 18px; height: 18px; fill: white; }
-    .brand-name { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 16px; color: var(--text); letter-spacing: -0.3px; }
+    .brand-name { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 15px; color: var(--text); letter-spacing: -0.3px; }
     .brand-name span { color: var(--accent); }
-    h1 { font-family: 'DM Sans', sans-serif; font-size: 22px; font-weight: 600; color: var(--text); margin-bottom: 6px; letter-spacing: -0.4px; }
-    .subtitle { font-size: 13px; color: var(--muted); margin-bottom: 28px; }
+    .brand-badge { font-size: 9px; background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; border-radius: 4px; padding: 1px 6px; margin-left: 6px; font-weight: 600; letter-spacing: 0.5px; }
+
+    h1 { font-family: 'DM Sans', sans-serif; font-size: 22px; font-weight: 600; color: var(--text); margin-bottom: 4px; letter-spacing: -0.4px; }
+    .subtitle { font-size: 12px; color: var(--muted); margin-bottom: 24px; line-height: 1.5; }
+
+    .sso-notice { background: #f0f4ff; border: 1px solid #d0d9f7; border-radius: 8px; padding: 10px 14px; font-size: 11px; color: #4361ee; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+    .sso-notice svg { width: 14px; height: 14px; fill: #4361ee; flex-shrink: 0; }
+
     label { display: block; font-size: 12px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+    .input-wrap { position: relative; }
     input[type="password"] { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 14px; color: var(--text); background: var(--white); outline: none; transition: border-color 0.15s, box-shadow 0.15s; }
     input[type="password"]:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+
+    .forgot { font-size: 11px; color: var(--muted); text-align: right; margin-top: 6px; }
+    .forgot a { color: var(--accent); text-decoration: none; }
+
     .btn { width: 100%; margin-top: 16px; padding: 11px; background: var(--accent); color: white; border: none; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 14px; cursor: pointer; transition: opacity 0.15s, transform 0.1s; }
     .btn:hover { opacity: 0.9; }
     .btn:active { transform: scale(0.99); }
+
+    .divider { display: flex; align-items: center; gap: 12px; margin: 18px 0; }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .divider span { font-size: 11px; color: var(--muted); white-space: nowrap; }
+
+    .session-notice { font-size: 11px; color: var(--muted); display: flex; align-items: flex-start; gap: 6px; margin-top: 16px; line-height: 1.5; }
+    .session-notice svg { width: 12px; height: 12px; fill: var(--muted); flex-shrink: 0; margin-top: 1px; }
+
     .error { margin-top: 14px; padding: 10px 12px; background: rgba(230,57,70,0.07); border: 1px solid rgba(230,57,70,0.2); border-radius: 6px; color: var(--danger); font-size: 12px; }
-    .footer { margin-top: 20px; font-size: 11px; color: var(--muted); text-align: center; }
+
+    .badges { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 20px; flex-wrap: wrap; }
+    .badge-item { display: flex; align-items: center; gap: 4px; font-size: 10px; color: var(--muted); }
+    .badge-item svg { width: 11px; height: 11px; fill: var(--muted); }
+    .badge-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--border); }
+
+    .footer { margin-top: 16px; font-size: 11px; color: var(--muted); text-align: center; line-height: 1.8; }
+    .footer a { color: var(--muted); text-decoration: none; }
+    .footer a:hover { color: var(--accent); }
   </style>
 </head>
 <body>
@@ -42,19 +78,56 @@
           <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/>
         </svg>
       </div>
-      <div class="brand-name">DMT <span>Analytics</span></div>
+      <div class="brand-name">Data &amp; Metrics Telemetry <span>Analytics</span> <span class="brand-badge">ENTERPRISE</span></div>
     </div>
+
     <h1>Welcome back</h1>
-    <p class="subtitle">Sign in to your analytics dashboard</p>
+    <p class="subtitle">Sign in with your organizational credentials to continue.</p>
+
     <form method="POST" action="/login">
-      <label for="password">Password</label>
-      <input type="password" id="password" name="password" placeholder="Enter your password" autofocus autocomplete="current-password"/>
-      <button type="submit" class="btn">Sign in</button>
+      <label for="password">Access Password</label>
+      <div class="input-wrap">
+        <input type="password" id="password" name="password" placeholder="Enter your access password" autofocus autocomplete="current-password"/>
+      </div>
+      <button type="submit" class="btn">Sign in to Dashboard</button>
     </form>
+
+    <div class="session-notice">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+      For security, your session will expire after 30 minutes of inactivity. Do not use shared devices to access this platform.
+    </div>
+
     <% if (error) { %>
       <div class="error">⚠ <%= error %></div>
     <% } %>
   </div>
-  <div class="footer">© 2026 DMT Analytics. All rights reserved.</div>
+
+  <div class="badges">
+    <div class="badge-item">
+      <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+      SOC 2 Type II
+    </div>
+    <div class="badge-dot"></div>
+    <div class="badge-item">
+      <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+      GDPR Compliant
+    </div>
+    <div class="badge-dot"></div>
+    <div class="badge-item">
+      <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+      ISO 27001
+    </div>
+    <div class="badge-dot"></div>
+    <div class="badge-item">
+      <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+      TLS 1.3 Encrypted
+    </div>
+  </div>
+
+  <div class="footer">
+    © 2026 DMT Telemetry, Inc. All rights reserved. v5.1.4<br>
+    <a href="#">Privacy Policy</a> &nbsp;·&nbsp; <a href="#">Terms of Service</a> &nbsp;·&nbsp; <a href="#">Security</a>
+  </div>
+
 </body>
 </html>
