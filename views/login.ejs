@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Access Required</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #080b0f;
+      --surface: #0d1117;
+      --border: #1e2d3d;
+      --accent: #00ff88;
+      --accent-dim: rgba(0, 255, 136, 0.12);
+      --text: #c9d1d9;
+      --muted: #484f58;
+      --danger: #ff4757;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Share Tech Mono', monospace;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* Animated grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0, 255, 136, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 136, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      animation: gridScroll 20s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes gridScroll {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(40px); }
+    }
+
+    .login-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 420px;
+      padding: 20px;
+    }
+
+    .login-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 48px 40px;
+      position: relative;
+    }
+
+    .login-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    }
+
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 13px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 40px;
+    }
+
+    .prompt {
+      color: var(--accent);
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .prompt::before { content: '> '; }
+
+    input[type="password"] {
+      width: 100%;
+      background: rgba(0,255,136,0.04);
+      border: 1px solid var(--border);
+      color: var(--accent);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 15px;
+      padding: 14px 16px;
+      outline: none;
+      transition: border-color 0.2s;
+      caret-color: var(--accent);
+    }
+
+    input[type="password"]:focus {
+      border-color: var(--accent);
+      background: rgba(0,255,136,0.07);
+    }
+
+    input[type="password"]::placeholder {
+      color: var(--muted);
+    }
+
+    .btn {
+      width: 100%;
+      margin-top: 16px;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 14px;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+
+    .btn:hover { opacity: 0.85; }
+    .btn:active { transform: scale(0.99); }
+
+    .error {
+      margin-top: 16px;
+      padding: 10px 14px;
+      background: rgba(255, 71, 87, 0.1);
+      border-left: 3px solid var(--danger);
+      color: var(--danger);
+      font-size: 12px;
+    }
+
+    .error::before { content: '✗ '; }
+  </style>
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="login-box">
+      <div class="logo">BXSS Server</div>
+      <div class="subtitle">authentication required</div>
+
+      <div class="prompt">enter passphrase</div>
+      <form method="POST" action="/login">
+        <input
+          type="password"
+          name="password"
+          placeholder="••••••••••••"
+          autofocus
+          autocomplete="current-password"
+        />
+        <button type="submit" class="btn">Authenticate</button>
+      </form>
+
+      <% if (error) { %>
+        <div class="error"><%= error %></div>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html>

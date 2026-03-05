@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hit #<%= hit.id %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #080b0f; --surface: #0d1117; --surface2: #111820;
+      --border: #1e2d3d; --accent: #00ff88; --text: #c9d1d9;
+      --muted: #484f58; --danger: #ff4757; --warning: #ffa502;
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'Share Tech Mono', monospace; min-height: 100vh; }
+
+    .topbar {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 0 32px; height: 56px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 14px; letter-spacing: 4px; color: var(--accent); }
+    .back { color: var(--muted); text-decoration: none; font-size: 12px; }
+    .back:hover { color: var(--accent); }
+
+    .main { padding: 32px; max-width: 1100px; }
+    .hit-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 22px; color: var(--accent); margin-bottom: 4px; }
+    .hit-title::before { content: '#'; opacity: 0.5; }
+    .hit-meta { font-size: 12px; color: var(--muted); margin-bottom: 32px; }
+
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+    .full { grid-column: 1 / -1; }
+
+    .card {
+      background: var(--surface); border: 1px solid var(--border); padding: 20px 24px;
+      position: relative;
+    }
+    .card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+    }
+    .card-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; font-family: 'Syne', sans-serif; }
+    .card-value { font-size: 13px; color: var(--text); word-break: break-all; line-height: 1.6; }
+    .card-value.accent { color: var(--accent); }
+    .card-value.warning { color: var(--warning); }
+
+    pre {
+      background: var(--surface2); border: 1px solid var(--border);
+      padding: 16px; font-size: 11px; overflow-x: auto; white-space: pre-wrap; word-break: break-all;
+      max-height: 400px; overflow-y: auto; line-height: 1.5;
+      color: var(--text);
+    }
+
+    .empty-val { color: var(--muted); font-style: italic; }
+
+    .actions { display: flex; gap: 12px; margin-top: 32px; }
+    .btn { font-family: 'Syne', sans-serif; font-weight: 600; font-size: 12px; letter-spacing: 2px;
+      text-transform: uppercase; padding: 10px 20px; border: 1px solid; cursor: pointer; text-decoration: none; }
+    .btn-back { color: var(--muted); border-color: var(--border); background: transparent; }
+    .btn-back:hover { color: var(--accent); border-color: var(--accent); }
+    .btn-del { color: var(--danger); border-color: var(--danger); background: transparent; }
+    .btn-del:hover { background: rgba(255,71,87,0.1); }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="logo">BXSS</div>
+  <a href="/dashboard" class="back">← back to dashboard</a>
+</header>
+
+<main class="main">
+  <div class="hit-title"><%= hit.id %></div>
+  <div class="hit-meta">received <%= new Date(hit.created_at).toUTCString() %></div>
+
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-label">Origin URL</div>
+      <div class="card-value accent"><%= hit.origin_url || '<span class="empty-val">unknown</span>' %></div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">IP Address</div>
+      <div class="card-value warning"><%= hit.ip || '<span class="empty-val">unknown</span>' %></div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Referer</div>
+      <div class="card-value"><%= hit.referer || '<span class="empty-val">none</span>' %></div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">User Agent</div>
+      <div class="card-value"><%= hit.user_agent || '<span class="empty-val">unknown</span>' %></div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Cookies</div>
+      <% try {
+           const c = JSON.parse(hit.cookies || '{}');
+           const keys = Object.keys(c);
+      %>
+        <% if (keys.length === 0) { %>
+          <div class="empty-val">no cookies</div>
+        <% } else { %>
+          <pre><%= JSON.stringify(c, null, 2) %></pre>
+        <% } %>
+      <% } catch(e) { %><pre><%= hit.cookies %></pre><% } %>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Local Storage</div>
+      <% try {
+           const ls = JSON.parse(hit.local_storage || '{}');
+           const keys = Object.keys(ls);
+      %>
+        <% if (keys.length === 0) { %>
+          <div class="empty-val">empty</div>
+        <% } else { %>
+          <pre><%= JSON.stringify(ls, null, 2) %></pre>
+        <% } %>
+      <% } catch(e) { %><pre><%= hit.local_storage %></pre><% } %>
+    </div>
+
+    <div class="card full">
+      <div class="card-label">DOM Snapshot (first 30k chars)</div>
+      <% if (hit.dom) { %>
+        <pre><%= hit.dom %></pre>
+      <% } else { %>
+        <div class="empty-val">no DOM captured</div>
+      <% } %>
+    </div>
+
+  </div>
+
+  <div class="actions">
+    <a href="/dashboard" class="btn btn-back">← Back</a>
+    <form method="POST" action="/dashboard/hit/<%= hit.id %>/delete" onsubmit="return confirm('Delete this hit?')">
+      <button type="submit" class="btn btn-del">Delete Hit</button>
+    </form>
+  </div>
+</main>
+
+</body>
+</html>
