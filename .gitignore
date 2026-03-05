@@ -4,3 +4,4 @@ data/*.db
 data/*.db-journal
 *.log
 .DS_Store
+data/\npackage-lock.json

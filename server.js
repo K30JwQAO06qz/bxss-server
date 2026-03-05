@@ -60,7 +60,8 @@ app.set('views', path.join(__dirname, 'views'));
 
 // ─── Body parsing ─────────────────────────────────────────────────────────────
 app.use(express.json({ limit: '2mb' }));
-app.use(express.urlencoded({ extended: true, limit: '2mb' }));
+app.use(express.urlencoded({ extended: true, limit: "2mb" }));
+app.use(express.text({ type: "text/plain", limit: "2mb" }));
 
 // ─── Session ─────────────────────────────────────────────────────────────────
 app.use(session({
@@ -102,6 +103,7 @@ app.get(['/t', '/x', '/c', '/payload.js'], (req, res) => {
   res.setHeader('Content-Type', 'application/javascript');
   res.setHeader('Cache-Control', 'no-store');
   // Allow cross-origin loading (that's the whole point)
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.send(src);
 });
