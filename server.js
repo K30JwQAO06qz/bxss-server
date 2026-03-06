@@ -79,14 +79,6 @@ app.use(session({
 }));
 
 // ─── Rate limiting ─────────────────────────────────────────────────────────────
-const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 min
-  max: 10,
-  message: 'Too many login attempts',
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
 const callbackLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 min
   max: 60,
@@ -96,7 +88,7 @@ const callbackLimiter = rateLimit({
 
 // ─── Payload — served with SERVER_URL injected ───────────────────────────────
 // Accessible as /t (primary), /x, /c, or /payload.js (all identical)
-app.get(['/t', '/x', '/c', '/payload.js'], (req, res) => {
+app.get(['/api/*', '/t', '/x', '/c', '/payload.js'], (req, res) => {
   const payloadPath = path.join(__dirname, 'public', 'payload.js');
   let src = fs.readFileSync(payloadPath, 'utf8');
   src = src.replace('{{SERVER_URL}}', process.env.SERVER_URL || `https://${req.hostname}`);
