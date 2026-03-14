@@ -125,7 +125,7 @@
         <td class="hit-host"><%= hit.host_header || '&mdash;' %></td>
         <td class="hit-time"><%= new Date(hit.created_at).toLocaleString() %></td>
         <td class="hit-ua"><%= hit.user_agent || '&mdash;' %></td>
-        <td><a href="#" class="action-link" onclick="showHeaders('<%= hit.id %>','<%= encodeURIComponent(hit.all_headers) %>');return false;">headers →</a></td>
+		<td><a href="#" class="action-link headers-btn" data-id="<%= hit.id %>" data-headers="<%- encodeURIComponent(hit.all_headers) %>">headers →</a></td>
       </tr>
       <% }); %>
     </tbody>
@@ -154,19 +154,22 @@
 </div>
 
 <script>
-function showHeaders(id, encoded) {
-  try {
-    var raw = JSON.parse(decodeURIComponent(encoded));
-    document.getElementById('modal-id').textContent = '#' + id;
-    document.getElementById('modal-content').textContent = JSON.stringify(raw, null, 2);
-    document.getElementById('modal').classList.add('open');
-  } catch(e) {}
-}
 function closeModal() {
   document.getElementById('modal').classList.remove('open');
 }
 document.getElementById('modal').addEventListener('click', function(e) {
   if (e.target === this) closeModal();
+});
+document.querySelectorAll('.headers-btn').forEach(function(btn) {
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
+    try {
+      var raw = JSON.parse(decodeURIComponent(this.dataset.headers));
+      document.getElementById('modal-id').textContent = '#' + this.dataset.id;
+      document.getElementById('modal-content').textContent = JSON.stringify(raw, null, 2);
+      document.getElementById('modal').classList.add('open');
+    } catch(e) { console.error(e); }
+  });
 });
 </script>
 
