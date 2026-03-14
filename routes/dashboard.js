@@ -73,3 +73,42 @@ router.post('/clear', requireAuth, (req, res) => {
 });
 
 module.exports = router;
+
+// GET /dashboard/ssrf
+router.get('/ssrf', requireAuth, (req, res) => {
+  const page = Math.max(1, parseInt(req.query.page) || 1);
+  const limit = 20;
+  const offset = (page - 1) * limit;
+
+  const hits = db.prepare(
+    'SELECT * FROM ssrf_hits ORDER BY created_at DESC LIMIT ? OFFSET ?'
+  ).all(limit, offset);
+
+  const safeHits = hits.map(h => ({
+    id: h.id,
+    created_at: h.created_at,
+    probe_id: sanitize(h.probe_id),
+    ip: sanitize(h.ip),
+    user_agent: sanitize(h.user_agent),
+    referer: sanitize(h.referer),
+    host_header: sanitize(h.host_header),
+    all_headers: h.all_headers,
+  }));
+
+  const { total } = db.prepare('SELECT COUNT(*) as total FROM ssrf_hits').get();
+  const totalPages = Math.ceil(total / limit);
+
+  res.render('ssrf', {
+    hits: safeHits,
+    page,
+    totalPages,
+    total,
+    serverUrl: process.env.SERVER_URL || 'https://yourdomain.com',
+  });
+});
+
+// DELETE /dashboard/ssrf/clear
+router.post('/ssrf/clear', requireAuth, (req, res) => {
+  db.prepare('DELETE FROM ssrf_hits').run();
+  res.redirect('/dashboard/ssrf');
+});

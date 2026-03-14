@@ -102,6 +102,7 @@ app.get(['/api/*', '/t', '/x', '/c', '/payload.js'], (req, res) => {
 
 // ─── Routes ──────────────────────────────────────────────────────────────────
 app.use('/callback', callbackLimiter, require('./routes/callback'));
+app.use('/ssrf', callbackLimiter, require('./routes/ssrf'));
 app.use('/', require('./routes/auth'));
 app.use('/dashboard',                 require('./routes/dashboard'));
 

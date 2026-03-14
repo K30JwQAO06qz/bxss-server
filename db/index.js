@@ -28,6 +28,17 @@ db.exec(`
     extra TEXT
   );
 
+  CREATE TABLE IF NOT EXISTS ssrf_hits (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    probe_id TEXT,
+    ip TEXT,
+    user_agent TEXT,
+    referer TEXT,
+    host_header TEXT,
+    all_headers TEXT
+  );
+
   CREATE TABLE IF NOT EXISTS settings (
     key TEXT PRIMARY KEY,
     value TEXT

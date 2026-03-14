@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DMT Analytics — SSRF Hits</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #080b0f; --surface: #0d1117; --surface2: #111820;
+      --border: #1e2d3d; --accent: #ff6b35;
+      --text: #c9d1d9; --muted: #484f58; --danger: #ff4757; --warning: #ffa502; --green: #00ff88;
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'Share Tech Mono', monospace; min-height: 100vh; }
+    .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 32px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .topbar-left { display: flex; align-items: center; gap: 24px; }
+    .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 14px; letter-spacing: 4px; color: var(--accent); text-transform: uppercase; }
+    .nav-links { display: flex; gap: 16px; }
+    .nav-link { font-size: 11px; letter-spacing: 2px; color: var(--muted); text-decoration: none; text-transform: uppercase; padding: 4px 0; border-bottom: 1px solid transparent; }
+    .nav-link:hover, .nav-link.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .hit-count { font-size: 12px; color: var(--muted); }
+    .hit-count span { color: var(--accent); font-weight: bold; }
+    .topbar-right { display: flex; align-items: center; gap: 12px; }
+    .btn-sm { font-family: 'Syne', sans-serif; font-weight: 600; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; padding: 6px 14px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.15s; }
+    .btn-sm:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-sm.danger:hover { border-color: var(--danger); color: var(--danger); }
+    .main { padding: 32px; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 32px; }
+    .stat-card { background: var(--surface); border: 1px solid var(--border); padding: 20px 24px; position: relative; overflow: hidden; }
+    .stat-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, var(--accent), transparent); }
+    .stat-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .stat-value { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: var(--accent); }
+    .section-title { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; }
+    .hits-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .hits-table th { text-align: left; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); padding: 10px 16px; border-bottom: 1px solid var(--border); font-family: 'Syne', sans-serif; }
+    .hits-table td { padding: 14px 16px; border-bottom: 1px solid rgba(30,45,61,0.5); vertical-align: middle; max-width: 0; }
+    .hits-table tr:hover td { background: var(--surface2); }
+    .hit-id { color: var(--accent); font-weight: bold; white-space: nowrap; }
+    .hit-id::before { content: '#'; }
+    .probe-id { color: var(--green); font-family: 'Share Tech Mono', monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 20%; }
+    .hit-ip { color: var(--warning); white-space: nowrap; }
+    .hit-time { color: var(--muted); white-space: nowrap; font-size: 11px; }
+    .hit-ua { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); width: 25%; font-size: 11px; }
+    .hit-host { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); width: 20%; }
+    .action-link { color: var(--accent); text-decoration: none; font-size: 11px; white-space: nowrap; }
+    .action-link:hover { text-decoration: underline; }
+    .pagination { display: flex; gap: 8px; margin-top: 24px; justify-content: center; }
+    .page-link { padding: 6px 12px; border: 1px solid var(--border); color: var(--muted); text-decoration: none; font-size: 12px; transition: all 0.15s; }
+    .page-link:hover, .page-link.active { border-color: var(--accent); color: var(--accent); }
+    .empty { text-align: center; padding: 80px 0; color: var(--muted); }
+    .empty-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+    .empty-sub { font-size: 12px; }
+    .probe-url-box { background: var(--surface2); border: 1px solid var(--border); padding: 16px 20px; margin-bottom: 32px; }
+    .probe-url-label { font-size: 10px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
+    .probe-url { color: var(--accent); font-size: 13px; word-break: break-all; }
+    .modal-backdrop { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:200; align-items:center; justify-content:center; }
+    .modal-backdrop.open { display:flex; }
+    .modal { background:var(--surface); border:1px solid var(--border); padding:28px; max-width:700px; width:90%; max-height:80vh; overflow-y:auto; position:relative; }
+    .modal h3 { font-family:'Syne',sans-serif; font-size:14px; font-weight:700; color:var(--accent); margin-bottom:16px; letter-spacing:2px; text-transform:uppercase; }
+    .modal pre { font-size:11px; color:var(--text); white-space:pre-wrap; word-break:break-all; background:var(--surface2); padding:14px; border:1px solid var(--border); }
+    .modal-close { position:absolute; top:14px; right:16px; background:transparent; border:none; color:var(--muted); font-size:18px; cursor:pointer; }
+    .modal-close:hover { color:var(--accent); }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="logo">DMT Analytics</div>
+    <nav class="nav-links">
+      <a href="/dashboard" class="nav-link">XSS Hits</a>
+      <a href="/dashboard/ssrf" class="nav-link active">SSRF Hits</a>
+    </nav>
+    <div class="hit-count"><span><%= total %></span> ssrf callbacks</div>
+  </div>
+  <div class="topbar-right">
+    <% if (total > 0) { %>
+    <form method="POST" action="/dashboard/ssrf/clear" onsubmit="return confirm('Delete all SSRF hits?')">
+      <button type="submit" class="btn-sm danger">Clear All</button>
+    </form>
+    <% } %>
+    <form method="POST" action="/logout">
+      <button type="submit" class="btn-sm">Logout</button>
+    </form>
+  </div>
+</header>
+
+<main class="main">
+  <div class="stats">
+    <div class="stat-card">
+      <div class="stat-label">Total Callbacks</div>
+      <div class="stat-value"><%= total %></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">This Page</div>
+      <div class="stat-value"><%= hits.length %></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Latest Hit</div>
+      <div class="stat-value" style="font-size:16px;padding-top:6px;">
+        <%= hits.length > 0 ? new Date(hits[0].created_at).toLocaleDateString() : '&mdash;' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="probe-url-box">
+    <div class="probe-url-label">// your ssrf callback url — replace PROBE_ID per test</div>
+    <div class="probe-url" id="probe-url-display"><%= serverUrl %>/ssrf/<strong>PROBE_ID</strong></div>
+  </div>
+
+  <% if (hits.length > 0) { %>
+  <div class="section-title">// ssrf callbacks</div>
+  <table class="hits-table">
+    <thead>
+      <tr><th>ID</th><th>Probe ID</th><th>IP</th><th>Host Header</th><th>Time</th><th>User Agent</th><th></th></tr>
+    </thead>
+    <tbody>
+      <% hits.forEach(function(hit) { %>
+      <tr>
+        <td><span class="hit-id"><%= hit.id %></span></td>
+        <td class="probe-id"><%= hit.probe_id || '&mdash;' %></td>
+        <td><span class="hit-ip"><%= hit.ip || '&mdash;' %></span></td>
+        <td class="hit-host"><%= hit.host_header || '&mdash;' %></td>
+        <td class="hit-time"><%= new Date(hit.created_at).toLocaleString() %></td>
+        <td class="hit-ua"><%= hit.user_agent || '&mdash;' %></td>
+        <td><a href="#" class="action-link" onclick="showHeaders('<%= hit.id %>','<%= encodeURIComponent(hit.all_headers) %>');return false;">headers →</a></td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+  <% if (totalPages > 1) { %>
+  <div class="pagination">
+    <% for (let i = 1; i <= totalPages; i++) { %>
+      <a href="/dashboard/ssrf?page=<%= i %>" class="page-link <%= page === i ? 'active' : '' %>"><%= i %></a>
+    <% } %>
+  </div>
+  <% } %>
+  <% } else { %>
+  <div class="empty">
+    <div class="empty-title">No callbacks yet</div>
+    <div class="empty-sub">Inject your SSRF probe URL into a target parameter and wait for the ping</div>
+  </div>
+  <% } %>
+</main>
+
+<div class="modal-backdrop" id="modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h3>// raw headers — hit <span id="modal-id"></span></h3>
+    <pre id="modal-content"></pre>
+  </div>
+</div>
+
+<script>
+function showHeaders(id, encoded) {
+  try {
+    var raw = JSON.parse(decodeURIComponent(encoded));
+    document.getElementById('modal-id').textContent = '#' + id;
+    document.getElementById('modal-content').textContent = JSON.stringify(raw, null, 2);
+    document.getElementById('modal').classList.add('open');
+  } catch(e) {}
+}
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+}
+document.getElementById('modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+</script>
+
+</body>
+</html>

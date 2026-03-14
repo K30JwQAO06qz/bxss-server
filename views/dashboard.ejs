@@ -17,6 +17,9 @@
     .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 32px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
     .topbar-left { display: flex; align-items: center; gap: 24px; }
     .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 14px; letter-spacing: 4px; color: var(--accent); text-transform: uppercase; }
+    .nav-links { display: flex; gap: 16px; }
+    .nav-link { font-size: 11px; letter-spacing: 2px; color: var(--muted); text-decoration: none; text-transform: uppercase; padding: 4px 0; border-bottom: 1px solid transparent; }
+    .nav-link:hover, .nav-link.active { color: var(--accent); border-bottom-color: var(--accent); }
     .hit-count { font-size: 12px; color: var(--muted); }
     .hit-count span { color: var(--accent); font-weight: bold; }
     .topbar-right { display: flex; align-items: center; gap: 12px; }
@@ -71,6 +74,10 @@
 <header class="topbar">
   <div class="topbar-left">
     <div class="logo">DMT Analytics</div>
+    <nav class="nav-links">
+      <a href="/dashboard" class="nav-link active">XSS Hits</a>
+      <a href="/dashboard/ssrf" class="nav-link">SSRF Hits</a>
+    </nav>
     <div class="hit-count"><span><%= total %></span> total hits</div>
   </div>
   <div class="topbar-right">

