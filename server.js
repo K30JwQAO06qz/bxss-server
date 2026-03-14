@@ -88,13 +88,11 @@ const callbackLimiter = rateLimit({
 
 // ─── Payload — served with SERVER_URL injected ───────────────────────────────
 // Accessible as /t (primary), /x, /c, or /payload.js (all identical)
-app.get(['/api/*', '/t', '/x', '/c', '/payload.js'], (req, res) => {
-  const payloadPath = path.join(__dirname, 'public', 'payload.js');
-  let src = fs.readFileSync(payloadPath, 'utf8');
-  src = src.replace('{{SERVER_URL}}', process.env.SERVER_URL || `https://${req.hostname}`);
+app.get(['/api/*', '/t', '/x', '/c', '/payload.js', '/payload.min.js'], (req, res) => {
+  const payloadPath = path.join(__dirname, 'public', 'payload.min.js');
+  const src = fs.readFileSync(payloadPath, 'utf8');
   res.setHeader('Content-Type', 'application/javascript');
   res.setHeader('Cache-Control', 'no-store');
-  // Allow cross-origin loading (that's the whole point)
   res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.send(src);
